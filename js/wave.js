@@ -121,10 +121,14 @@ class WaveManager {
         // Update highest wave
         if (this.currentWave > this.game.stats.highestWave) {
             this.game.stats.highestWave = this.currentWave;
+            // Check for new biome unlocks
+            this.game.biomeManager.updateUnlockedBiomes();
+            this.game.ui.updateBiomeSelector();
         }
         
-        // Wave completion bonus
-        const waveBonus = 50 * this.currentWave;
+        // Wave completion bonus (apply biome gold modifier)
+        const goldMod = this.game.biomeManager.getGoldMod();
+        const waveBonus = Math.floor(50 * this.currentWave * goldMod);
         this.game.addGold(waveBonus);
         
         // Advance wave

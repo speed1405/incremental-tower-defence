@@ -208,6 +208,97 @@ aside h3 {
     flex-direction: column;
 }
 
+/* Biome selector */
+#biome-selector {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 5px;
+}
+
+#current-biome {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 8px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #ffd700;
+    transition: all 0.2s;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+}
+
+#current-biome:hover {
+    background: rgba(0, 0, 0, 0.7);
+    border-color: rgba(255, 215, 0, 0.6);
+}
+
+#biome-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(20, 20, 30, 0.95);
+    border: 2px solid rgba(255, 215, 0, 0.5);
+    border-radius: 10px;
+    padding: 10px;
+    min-width: 280px;
+    z-index: 100;
+    margin-top: 5px;
+}
+
+#biome-dropdown.hidden {
+    display: none;
+}
+
+.biome-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 5px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.biome-option:last-child {
+    margin-bottom: 0;
+}
+
+.biome-option:hover:not(.locked) {
+    background: rgba(255, 215, 0, 0.2);
+}
+
+.biome-option.current {
+    background: rgba(76, 175, 80, 0.3);
+    border: 1px solid rgba(76, 175, 80, 0.5);
+}
+
+.biome-option.locked {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.biome-icon {
+    font-size: 1.5em;
+}
+
+.biome-name {
+    flex: 1;
+    font-weight: bold;
+}
+
+.biome-stats {
+    font-size: 0.75em;
+    color: #aaa;
+}
+
+.biome-unlock {
+    font-size: 0.75em;
+    color: #f44336;
+}
+
 #game-canvas {
     background: #0a3d2c;
     border-radius: 10px;

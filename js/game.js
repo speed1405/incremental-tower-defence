@@ -21,6 +21,7 @@ class Game {
         };
         
         // Managers
+        this.biomeManager = new BiomeManager(this);
         this.waveManager = new WaveManager(this);
         this.upgradeManager = new UpgradeManager(this);
         this.researchManager = new ResearchManager(this);
@@ -105,8 +106,11 @@ class Game {
 
     // Draw game
     draw() {
-        // Clear canvas
-        this.ctx.fillStyle = '#0a3d2c';
+        // Get current biome settings
+        const biome = this.biomeManager.getCurrentBiome();
+        
+        // Clear canvas with biome background color
+        this.ctx.fillStyle = biome.background;
         this.ctx.fillRect(0, 0, CONFIG.CANVAS_WIDTH, CONFIG.CANVAS_HEIGHT);
         
         // Draw path
@@ -126,7 +130,8 @@ class Game {
 
     // Draw the enemy path
     drawPath() {
-        const path = CONFIG.PATH;
+        const biome = this.biomeManager.getCurrentBiome();
+        const path = biome.path;
         
         // Draw path background
         this.ctx.beginPath();
@@ -134,19 +139,19 @@ class Game {
         for (let i = 1; i < path.length; i++) {
             this.ctx.lineTo(path[i].x, path[i].y);
         }
-        this.ctx.strokeStyle = '#3d2a0a';
+        this.ctx.strokeStyle = biome.pathColor;
         this.ctx.lineWidth = 40;
         this.ctx.lineCap = 'round';
         this.ctx.lineJoin = 'round';
         this.ctx.stroke();
         
         // Draw path detail
-        this.ctx.strokeStyle = '#5a3d0f';
+        this.ctx.strokeStyle = biome.pathDetail;
         this.ctx.lineWidth = 35;
         this.ctx.stroke();
         
         // Draw path edges
-        this.ctx.strokeStyle = '#2d1a05';
+        this.ctx.strokeStyle = biome.pathEdge;
         this.ctx.lineWidth = 40;
         this.ctx.setLineDash([5, 15]);
         this.ctx.stroke();
@@ -174,7 +179,8 @@ class Game {
 
     // Draw grid
     drawGrid() {
-        this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+        const biome = this.biomeManager.getCurrentBiome();
+        this.ctx.strokeStyle = biome.gridColor;
         this.ctx.lineWidth = 1;
         
         for (let x = 0; x <= CONFIG.CANVAS_WIDTH; x += CONFIG.GRID_SIZE) {
@@ -312,7 +318,8 @@ class Game {
             player: this.player.getSaveData(),
             upgrades: this.upgradeManager.getSaveData(),
             research: this.researchManager.getSaveData(),
-            prestige: this.prestigeManager.getSaveData()
+            prestige: this.prestigeManager.getSaveData(),
+            biome: this.biomeManager.getSaveData()
         };
         
         Utils.saveToStorage('towerDefenseSave', saveData);
@@ -329,6 +336,9 @@ class Game {
             this.lives = saveData.lives || CONFIG.STARTING_LIVES;
             this.stats = saveData.stats || { totalGoldEarned: 0, enemiesKilled: 0, highestWave: 1 };
             this.waveManager.currentWave = saveData.wave || 1;
+            
+            // Load biome
+            this.biomeManager.loadSaveData(saveData.biome);
             
             // Load upgrades
             this.upgradeManager.loadSaveData(saveData.upgrades);
