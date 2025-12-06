@@ -208,7 +208,7 @@ aside h3 {
     flex-direction: column;
 }
 
-/* Biome selector */
+/* Biome display (progression-based) */
 #biome-selector {
     position: relative;
     display: flex;
@@ -217,10 +217,13 @@ aside h3 {
 }
 
 #current-biome {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     background: rgba(0, 0, 0, 0.5);
     padding: 8px 20px;
     border-radius: 20px;
-    cursor: pointer;
+    cursor: help;
     font-weight: bold;
     color: #ffd700;
     transition: all 0.2s;
@@ -232,71 +235,100 @@ aside h3 {
     border-color: rgba(255, 215, 0, 0.6);
 }
 
+.biome-icon-display {
+    font-size: 1.2em;
+}
+
+.biome-name-display {
+    color: #ffd700;
+}
+
+.biome-waves {
+    font-size: 0.8em;
+    color: #aaa;
+    font-weight: normal;
+}
+
 #biome-dropdown {
     position: absolute;
     top: 100%;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(20, 20, 30, 0.95);
+    background: rgba(20, 20, 30, 0.98);
     border: 2px solid rgba(255, 215, 0, 0.5);
     border-radius: 10px;
-    padding: 10px;
-    min-width: 280px;
+    padding: 15px;
+    min-width: 350px;
     z-index: 100;
     margin-top: 5px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
 }
 
 #biome-dropdown.hidden {
     display: none;
 }
 
-.biome-option {
-    display: flex;
+.biome-progress-item {
+    display: grid;
+    grid-template-columns: 25px 35px 1fr auto;
+    grid-template-rows: auto auto;
     align-items: center;
-    gap: 10px;
-    padding: 10px 15px;
+    gap: 5px 10px;
+    padding: 10px 12px;
     border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-bottom: 5px;
-    background: rgba(255, 255, 255, 0.05);
+    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border-left: 3px solid transparent;
 }
 
-.biome-option:last-child {
+.biome-progress-item:last-child {
     margin-bottom: 0;
 }
 
-.biome-option:hover:not(.locked) {
-    background: rgba(255, 215, 0, 0.2);
+.biome-progress-item.current {
+    background: rgba(76, 175, 80, 0.2);
+    border-left-color: #4caf50;
 }
 
-.biome-option.current {
-    background: rgba(76, 175, 80, 0.3);
-    border: 1px solid rgba(76, 175, 80, 0.5);
+.biome-progress-item.unlocked:not(.current) {
+    border-left-color: #666;
 }
 
-.biome-option.locked {
+.biome-progress-item.locked {
     opacity: 0.5;
-    cursor: not-allowed;
+    border-left-color: #333;
+}
+
+.biome-status {
+    font-size: 0.9em;
+    color: #4caf50;
+    text-align: center;
+}
+
+.biome-progress-item.locked .biome-status {
+    color: #666;
 }
 
 .biome-icon {
     font-size: 1.5em;
+    text-align: center;
 }
 
 .biome-name {
-    flex: 1;
     font-weight: bold;
+    color: #e0e0e0;
 }
 
-.biome-stats {
+.biome-wave-range {
+    font-size: 0.85em;
+    color: #888;
+    text-align: right;
+}
+
+.biome-modifiers {
+    grid-column: 3 / 5;
     font-size: 0.75em;
     color: #aaa;
-}
-
-.biome-unlock {
-    font-size: 0.75em;
-    color: #f44336;
 }
 
 #game-canvas {

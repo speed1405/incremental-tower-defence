@@ -280,6 +280,10 @@ class Game {
         // Reset wave manager
         this.waveManager.reset();
         
+        // Reset biome to starting biome based on new wave
+        this.biomeManager.reset();
+        this.biomeManager.checkBiomeProgression(this.waveManager.currentWave);
+        
         // Reset upgrades (but not research or prestige)
         this.upgradeManager.reset();
         

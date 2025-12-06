@@ -123,7 +123,6 @@ class WaveManager {
             this.game.stats.highestWave = this.currentWave;
             // Check for new biome unlocks
             this.game.biomeManager.updateUnlockedBiomes();
-            this.game.ui.updateBiomeSelector();
         }
         
         // Wave completion bonus (apply biome gold modifier)
@@ -134,8 +133,12 @@ class WaveManager {
         // Advance wave
         this.currentWave++;
         
+        // Check for biome progression based on new wave
+        this.game.biomeManager.checkBiomeProgression(this.currentWave);
+        
         // Update UI
         this.game.ui.updateWaveInfo();
+        this.game.ui.updateBiomeDisplay();
         
         // Auto start next wave if unlocked
         if (this.game.hasPrestigeUnlock('autoStart')) {

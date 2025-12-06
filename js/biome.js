@@ -16,6 +16,51 @@ class BiomeManager {
         return this.getCurrentBiome().path;
     }
 
+    // Get the biome for a specific wave (automatic progression)
+    getBiomeForWave(wave) {
+        // Get all biomes sorted by unlock wave in descending order
+        const biomes = Object.entries(CONFIG.BIOMES)
+            .sort((a, b) => b[1].unlockWave - a[1].unlockWave);
+        
+        // Find the highest biome that the wave qualifies for
+        for (const [key, config] of biomes) {
+            if (wave >= config.unlockWave) {
+                return key;
+            }
+        }
+        return 'forest'; // Default fallback
+    }
+
+    // Check and update biome based on current wave (automatic progression)
+    checkBiomeProgression(currentWave) {
+        const appropriateBiome = this.getBiomeForWave(currentWave);
+        
+        if (appropriateBiome !== this.currentBiome) {
+            const oldBiome = this.currentBiome;
+            this.currentBiome = appropriateBiome;
+            
+            // Add to unlocked biomes if not already there
+            if (!this.unlockedBiomes.includes(appropriateBiome)) {
+                this.unlockedBiomes.push(appropriateBiome);
+            }
+            
+            // Move player to center of new biome
+            this.game.player.x = CONFIG.CANVAS_WIDTH / 2;
+            this.game.player.y = CONFIG.CANVAS_HEIGHT / 2;
+            this.game.player.targetX = this.game.player.x;
+            this.game.player.targetY = this.game.player.y;
+            
+            // Update UI
+            if (this.game.ui) {
+                this.game.ui.updateBiomeDisplay();
+                this.game.ui.showBiomeTransition(oldBiome, appropriateBiome);
+            }
+            
+            return true; // Biome changed
+        }
+        return false; // No change
+    }
+
     // Check if a biome is unlocked based on highest wave reached
     isBiomeUnlocked(biomeKey) {
         const biome = CONFIG.BIOMES[biomeKey];
@@ -31,47 +76,25 @@ class BiomeManager {
         }
     }
 
-    // Switch to a different biome
-    switchBiome(biomeKey) {
-        if (!this.isBiomeUnlocked(biomeKey)) {
-            return false;
-        }
-        
-        this.currentBiome = biomeKey;
-        
-        // Reset enemies when switching biomes
-        this.game.enemies = [];
-        
-        // Reset wave if switching during a wave
-        if (this.game.waveManager.waveActive) {
-            this.game.waveManager.waveActive = false;
-            this.game.waveManager.enemiesRemaining = 0;
-        }
-        
-        // Move player to center of new biome
-        this.game.player.x = CONFIG.CANVAS_WIDTH / 2;
-        this.game.player.y = CONFIG.CANVAS_HEIGHT / 2;
-        this.game.player.targetX = this.game.player.x;
-        this.game.player.targetY = this.game.player.y;
-        
-        // Update UI
-        if (this.game.ui) {
-            this.game.ui.updateBiomeSelector();
-            this.game.ui.updateWaveInfo();
-        }
-        
-        return true;
-    }
-
-    // Get all biomes with their unlock status
+    // Get all biomes with their unlock status and wave ranges
     getAllBiomes() {
+        const biomeEntries = Object.entries(CONFIG.BIOMES);
         const biomes = [];
-        for (const [key, config] of Object.entries(CONFIG.BIOMES)) {
+        
+        // Sort by unlock wave to determine wave ranges
+        const sortedBiomes = [...biomeEntries].sort((a, b) => a[1].unlockWave - b[1].unlockWave);
+        
+        for (let i = 0; i < sortedBiomes.length; i++) {
+            const [key, config] = sortedBiomes[i];
+            const nextBiome = sortedBiomes[i + 1];
+            const waveEnd = nextBiome ? nextBiome[1].unlockWave - 1 : '∞';
+            
             biomes.push({
                 key,
                 ...config,
                 unlocked: this.isBiomeUnlocked(key),
-                current: key === this.currentBiome
+                current: key === this.currentBiome,
+                waveRange: `${config.unlockWave === 0 ? 1 : config.unlockWave}-${waveEnd}`
             });
         }
         return biomes;
@@ -88,6 +111,11 @@ class BiomeManager {
 
     getGoldMod() {
         return this.getCurrentBiome().goldMod;
+    }
+
+    // Reset biome to forest (for prestige)
+    reset() {
+        this.currentBiome = 'forest';
     }
 
     // Get save data

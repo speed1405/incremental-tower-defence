@@ -68,16 +68,13 @@ class UI {
             this.game.waveManager.startWave();
         });
         
-        // Biome selector
-        this.elements.currentBiome.addEventListener('click', () => {
-            this.toggleBiomeDropdown();
+        // Biome info hover tooltip
+        this.elements.currentBiome.addEventListener('mouseenter', () => {
+            this.showBiomeTooltip();
         });
         
-        // Close biome dropdown when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('#biome-selector')) {
-                this.elements.biomeDropdown.classList.add('hidden');
-            }
+        this.elements.currentBiome.addEventListener('mouseleave', () => {
+            this.hideBiomeTooltip();
         });
         
         // Tab buttons
@@ -108,47 +105,61 @@ class UI {
         }, 30000);
     }
     
-    // Toggle biome dropdown
-    toggleBiomeDropdown() {
-        this.elements.biomeDropdown.classList.toggle('hidden');
-        this.updateBiomeSelector();
+    // Update biome display (simplified - just shows current biome)
+    updateBiomeDisplay() {
+        const currentBiome = this.game.biomeManager.getCurrentBiome();
+        const biomes = this.game.biomeManager.getAllBiomes();
+        const currentBiomeInfo = biomes.find(b => b.current);
+        
+        this.elements.currentBiome.innerHTML = `
+            <span class="biome-icon-display">${currentBiome.icon}</span>
+            <span class="biome-name-display">${currentBiome.name}</span>
+            <span class="biome-waves">(Waves ${currentBiomeInfo ? currentBiomeInfo.waveRange : '1-∞'})</span>
+        `;
+        
+        // Update the progress bar in dropdown
+        this.updateBiomeProgressList();
     }
     
-    // Update biome selector
-    updateBiomeSelector() {
-        // Update current biome display
-        const currentBiome = this.game.biomeManager.getCurrentBiome();
-        this.elements.currentBiome.textContent = `${currentBiome.icon} ${currentBiome.name}`;
-        
-        // Update dropdown
+    // Update biome progress list in dropdown
+    updateBiomeProgressList() {
         this.elements.biomeDropdown.innerHTML = '';
         const biomes = this.game.biomeManager.getAllBiomes();
+        const currentWave = this.game.waveManager.currentWave;
         
         for (const biome of biomes) {
             const div = document.createElement('div');
-            div.className = `biome-option ${biome.current ? 'current' : ''} ${biome.unlocked ? '' : 'locked'}`;
+            div.className = `biome-progress-item ${biome.current ? 'current' : ''} ${biome.unlocked ? 'unlocked' : 'locked'}`;
             
-            if (biome.unlocked) {
-                div.innerHTML = `
-                    <span class="biome-icon">${biome.icon}</span>
-                    <span class="biome-name">${biome.name}</span>
-                    <span class="biome-stats">HP: ${Math.floor(biome.enemyHealthMod * 100)}% | Gold: ${Math.floor(biome.goldMod * 100)}%</span>
-                `;
-                div.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    this.game.biomeManager.switchBiome(biome.key);
-                    this.elements.biomeDropdown.classList.add('hidden');
-                });
-            } else {
-                div.innerHTML = `
-                    <span class="biome-icon">🔒</span>
-                    <span class="biome-name">${biome.name}</span>
-                    <span class="biome-unlock">Reach Wave ${biome.unlockWave}</span>
-                `;
-            }
+            const statusIcon = biome.current ? '▶' : (biome.unlocked ? '✓' : '🔒');
+            
+            div.innerHTML = `
+                <span class="biome-status">${statusIcon}</span>
+                <span class="biome-icon">${biome.icon}</span>
+                <span class="biome-name">${biome.name}</span>
+                <span class="biome-wave-range">Waves ${biome.waveRange}</span>
+                <span class="biome-modifiers">HP: ${Math.floor(biome.enemyHealthMod * 100)}% | Gold: ${Math.floor(biome.goldMod * 100)}%</span>
+            `;
             
             this.elements.biomeDropdown.appendChild(div);
         }
+    }
+    
+    // Show biome tooltip on hover
+    showBiomeTooltip() {
+        this.elements.biomeDropdown.classList.remove('hidden');
+        this.updateBiomeProgressList();
+    }
+    
+    // Hide biome tooltip
+    hideBiomeTooltip() {
+        this.elements.biomeDropdown.classList.add('hidden');
+    }
+    
+    // Show biome transition notification
+    showBiomeTransition(oldBiomeKey, newBiomeKey) {
+        const newBiome = CONFIG.BIOMES[newBiomeKey];
+        this.showNotification(`🌍 Entering ${newBiome.icon} ${newBiome.name}!`);
     }
 
     // Switch tab
@@ -175,7 +186,7 @@ class UI {
         this.updateResearch();
         this.updatePrestigeButton();
         this.updatePrestigeUpgrades();
-        this.updateBiomeSelector();
+        this.updateBiomeDisplay();
         this.updateStats();
     }
 
