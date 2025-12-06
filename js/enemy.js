@@ -15,17 +15,25 @@ class Enemy {
         this.healAmount = config.healAmount || 0;
         this.healRadius = config.healRadius || 0;
         
-        // Scale with wave
+        // Get biome modifiers
+        const healthMod = game.biomeManager.getEnemyHealthMod();
+        const speedMod = game.biomeManager.getEnemySpeedMod();
+        const goldMod = game.biomeManager.getGoldMod();
+        
+        // Scale with wave and biome
         const waveMultiplier = 1 + (wave - 1) * 0.15;
-        this.maxHealth = Math.floor(this.baseHealth * waveMultiplier);
+        this.maxHealth = Math.floor(this.baseHealth * waveMultiplier * healthMod);
         this.health = this.maxHealth;
-        this.speed = this.baseSpeed;
-        this.gold = Math.floor(this.baseGold * waveMultiplier);
+        this.speed = this.baseSpeed * speedMod;
+        this.gold = Math.floor(this.baseGold * waveMultiplier * goldMod);
+        
+        // Get current biome path for spawn position
+        const currentPath = game.biomeManager.getCurrentPath();
         
         // Position and movement
         this.progress = 0; // Distance traveled along path
-        this.x = CONFIG.PATH[0].x;
-        this.y = CONFIG.PATH[0].y;
+        this.x = currentPath[0].x;
+        this.y = currentPath[0].y;
         this.angle = 0;
         
         // Status effects
@@ -129,7 +137,9 @@ class Enemy {
         // Move along path
         this.progress += this.currentSpeed * deltaTime;
         
-        const pathLength = Utils.getPathLength(CONFIG.PATH);
+        // Get current biome path
+        const currentPath = this.game.biomeManager.getCurrentPath();
+        const pathLength = Utils.getPathLength(currentPath);
         if (this.progress >= pathLength) {
             // Reached end of path
             this.game.loseLife();
@@ -138,7 +148,7 @@ class Enemy {
         }
         
         // Update position
-        const pos = Utils.getPointOnPath(CONFIG.PATH, this.progress);
+        const pos = Utils.getPointOnPath(currentPath, this.progress);
         this.x = pos.x;
         this.y = pos.y;
         this.angle = pos.angle;

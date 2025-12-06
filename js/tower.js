@@ -260,8 +260,10 @@ class Player {
 
     // Move towards target position
     moveTo(x, y) {
+        // Get current biome path for collision check
+        const currentPath = this.game.biomeManager.getCurrentPath();
         // Clamp to valid area (not on path)
-        if (!Utils.isOnPath(x, y, CONFIG.PATH, 30)) {
+        if (!Utils.isOnPath(x, y, currentPath, 30)) {
             this.targetX = Utils.clamp(x, this.size, CONFIG.CANVAS_WIDTH - this.size);
             this.targetY = Utils.clamp(y, this.size, CONFIG.CANVAS_HEIGHT - this.size);
         }

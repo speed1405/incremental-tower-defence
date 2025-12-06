@@ -17,7 +17,105 @@ const CONFIG = {
     // Gold generation (incremental mechanic)
     BASE_GOLD_PER_SECOND: 0.5,
     
-    // Enemy path (waypoints)
+    // Biomes - different themed areas with unique paths and visuals
+    BIOMES: {
+        forest: {
+            name: 'Enchanted Forest',
+            icon: '🌲',
+            unlockWave: 0, // Available from start
+            background: '#0a3d2c',
+            pathColor: '#3d2a0a',
+            pathDetail: '#5a3d0f',
+            pathEdge: '#2d1a05',
+            gridColor: 'rgba(255, 255, 255, 0.05)',
+            path: [
+                { x: 0, y: 300 },
+                { x: 200, y: 300 },
+                { x: 200, y: 100 },
+                { x: 400, y: 100 },
+                { x: 400, y: 500 },
+                { x: 600, y: 500 },
+                { x: 600, y: 300 },
+                { x: 800, y: 300 }
+            ],
+            enemyHealthMod: 1.0,
+            enemySpeedMod: 1.0,
+            goldMod: 1.0
+        },
+        desert: {
+            name: 'Scorching Desert',
+            icon: '🏜️',
+            unlockWave: 15,
+            background: '#3d2b1f',
+            pathColor: '#c2a05a',
+            pathDetail: '#d4b775',
+            pathEdge: '#8b7355',
+            gridColor: 'rgba(255, 200, 100, 0.05)',
+            path: [
+                { x: 0, y: 150 },
+                { x: 150, y: 150 },
+                { x: 150, y: 450 },
+                { x: 350, y: 450 },
+                { x: 350, y: 200 },
+                { x: 550, y: 200 },
+                { x: 550, y: 400 },
+                { x: 800, y: 400 }
+            ],
+            enemyHealthMod: 1.2,
+            enemySpeedMod: 1.1,
+            goldMod: 1.25
+        },
+        tundra: {
+            name: 'Frozen Tundra',
+            icon: '❄️',
+            unlockWave: 30,
+            background: '#1a2a3a',
+            pathColor: '#5a7a9a',
+            pathDetail: '#7a9aba',
+            pathEdge: '#3a5a7a',
+            gridColor: 'rgba(150, 200, 255, 0.05)',
+            path: [
+                { x: 0, y: 500 },
+                { x: 200, y: 500 },
+                { x: 200, y: 200 },
+                { x: 400, y: 200 },
+                { x: 400, y: 400 },
+                { x: 600, y: 400 },
+                { x: 600, y: 100 },
+                { x: 800, y: 100 }
+            ],
+            enemyHealthMod: 1.5,
+            enemySpeedMod: 0.9,
+            goldMod: 1.5
+        },
+        volcanic: {
+            name: 'Volcanic Wastes',
+            icon: '🌋',
+            unlockWave: 50,
+            background: '#2d1a1a',
+            pathColor: '#4a2a2a',
+            pathDetail: '#6a3a3a',
+            pathEdge: '#2a1515',
+            gridColor: 'rgba(255, 100, 50, 0.05)',
+            path: [
+                { x: 0, y: 300 },
+                { x: 100, y: 300 },
+                { x: 100, y: 100 },
+                { x: 300, y: 100 },
+                { x: 300, y: 500 },
+                { x: 500, y: 500 },
+                { x: 500, y: 250 },
+                { x: 700, y: 250 },
+                { x: 700, y: 450 },
+                { x: 800, y: 450 }
+            ],
+            enemyHealthMod: 2.0,
+            enemySpeedMod: 1.2,
+            goldMod: 2.0
+        }
+    },
+    
+    // Default path (for backwards compatibility)
     PATH: [
         { x: 0, y: 300 },
         { x: 200, y: 300 },
