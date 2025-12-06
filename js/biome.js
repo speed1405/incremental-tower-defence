@@ -1,4 +1,6 @@
 // Biome management system
+const STARTING_WAVE_DISPLAY = 1; // Display wave 1 instead of 0 for first biome
+
 class BiomeManager {
     constructor(game) {
         this.game = game;
@@ -94,7 +96,7 @@ class BiomeManager {
                 ...config,
                 unlocked: this.isBiomeUnlocked(key),
                 current: key === this.currentBiome,
-                waveRange: `${config.unlockWave === 0 ? 1 : config.unlockWave}-${waveEnd}`
+                waveRange: `${config.unlockWave === 0 ? STARTING_WAVE_DISPLAY : config.unlockWave}-${waveEnd}`
             });
         }
         return biomes;
